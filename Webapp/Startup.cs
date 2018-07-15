@@ -6,9 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Webapp.DataAccess.Models;
+using Webapp.Library.Repository;
+   
 
 namespace Webapp
 {
@@ -31,6 +35,10 @@ namespace Webapp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddScoped<WebappRepository>();
+            services.AddDbContext<PizzaStoreAppContext>(
+                options => options.UseSqlServer(Configuration.GetConnectionString("PizzaStoreDB"))
+            );
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

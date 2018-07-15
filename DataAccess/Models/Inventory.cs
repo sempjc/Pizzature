@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Webapp.DataAccess
+namespace Webapp.DataAccess.Models
 {
     public partial class Inventory
     {
