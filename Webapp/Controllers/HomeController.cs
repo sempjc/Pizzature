@@ -29,12 +29,28 @@ namespace Webapp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Login()
         {
+            ViewData["Message"] = "Your Login page.";
+
+            return View();
+        }
+
+        public IActionResult Signup()
+        {
+            ViewData["Message"] = "Your Sign Up page.";
+
+            return View();
+        }
+
+        public IActionResult Notfound()
+        {
+            ViewData["Message"] = "Page not found.";
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
