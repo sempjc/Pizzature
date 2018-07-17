@@ -37,7 +37,7 @@ namespace Webapp
 
             services.AddScoped<WebappRepository>();
             services.AddDbContext<PizzaStoreAppContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("PizzaStoreDB"))
+                options => options.UseSqlServer(Configuration.GetConnectionString("PizzaStoreAppDB"))
             );
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

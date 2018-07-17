@@ -1,0 +1,95 @@
+﻿@{
+    @using Webapp.DataAccess.Models
+    @using Webapp.UI.Models
+    @model OrderByLocation
+    Layout = "_Dashboard";
+
+}
+
+<h1>New Order</h1>
+
+<form asp-controller="Dashboard" asp-action="NewOrder" method="post">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Select a Dinner
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+
+                @{ int index = 0; }
+
+                @foreach (Inventory inventory in Model.InventoryLocation)
+                {
+                    var item = @Model.Item.First(i => i.Id == inventory.ItemId);
+                    var itype = @Model.Types.First(i => i.Id == item.ItemTypeId);
+
+
+                    if (@itype.Name == "Dinner")
+                    {
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-4">
+
+                                    <input 
+                                    asp-for="NewOrderDetails[index].ItemCheck" 
+                                    type="checkbox" 
+                                    aria-label="..."/>
+                                    <label>
+                                        @item.Name 
+                                        <span>@item.Price</span>
+                                    </label>
+                                    <input 
+                                    asp-for="NewOrderDetails[index].ItemPrice" 
+                                    type="number" 
+                                    value="@item.Price" 
+                                    hidden />
+
+                                    <input 
+                                    asp-for="NewOrderDetails[index].ItemID"
+                                    type="text"   
+                                    value="@item.Id"    
+                                    hidden />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="NewOrderDetails[index].ItemQty">
+                                        Quantity
+                                    </label>
+
+                                    <select asp-for="NewOrderDetails[index].ItemQty">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+
+                        index++;
+                    }
+                }
+
+            </ul>
+        </div>    
+          
+    </div>
+
+    <div style="width: 15%">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Place Order</button>
+    </div>
+
+</form>
+
+
+
+
+

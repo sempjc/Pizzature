@@ -1,6 +1,31 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    @model Webapp.UI.Models.UICustomer
+    ViewData["Title"] = "Login";
 }
-<h2>@ViewData["Title"]</h2>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container">
+    <form asp-controller="Home" asp-action="Signup" method="post" class="form-signin">
+        <h2 class="form-signin-heading">Please Sign Up</h2>
+
+        <label asp-for="FirstName" class="sr-only">First Name</label>
+        <input type="text" asp-for="FirstName" class="form-control" placeholder="First Name" required="yes"/>
+
+        <label asp-for="LastName" class="sr-only">Last Name</label>
+        <input type="text" asp-for="LastName" class="form-control" placeholder="Last Name" required="yes"/>
+
+        <label asp-for="Email" class="sr-only">Email address</label>
+        <input type="email" asp-for="Email" class="form-control" placeholder="Email address" required="yes" autofocus="">
+
+        <label asp-for="Password" class="sr-only">Password</label>
+        <input type="password" asp-for="Password" class="form-control" placeholder="Password" required="yes">
+
+        <label asp-for="LocationId" >Choose your near Locations:</label>
+        <select asp-for="LocationId">
+            <option value="1">Reston</option>
+            <option value="2">Herndon</option>
+            <option value="3">Vienna</option>
+        </select>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+    </form>
+</div>

@@ -5,11 +5,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Webapp.Models;
+using Webapp.UI.Models;
+using Webapp.DataAccess.Models;
+using Webapp.Library.Repository;
 
 namespace Webapp.Controllers
 {
     public class HomeController : Controller
     {
+        public WebappRepository Repo;
+        public HomeController(WebappRepository repo) 
+        {
+            Repo = repo;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -29,18 +38,62 @@ namespace Webapp.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult Login()
         {
-            ViewData["Message"] = "Your Login page.";
+            return View();
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult Login( UICustomer customer)
+        {
+            // Check if email is equal to the Register on DB
+            // Check if password is equal to the Registered on DB
+            // If equal redirect to Customer DashBoard
+            // If not return to Login and show error message
+            Customer Rcustomer = Repo.GetCustomerByEmail(customer.Email);
+
+            bool isEqualEmail = (customer.Email == Rcustomer.Email);
+            bool isEqualPassword = (customer.Password == Rcustomer.Password);
+
+            ViewData["invalidCredential"] = "";
+
+            if(isEqualEmail && isEqualPassword) 
+            {
+                return RedirectToAction(
+                    "Index", 
+                    "Dashboard", 
+                    new {id = Rcustomer.Id}
+                );
+            }
+            else 
+            {
+                ViewData["invalidCredential"] = "User name or password is incorrect";
+            }
 
             return View();
         }
 
+        [HttpGet]
         public IActionResult Signup()
         {
-            ViewData["Message"] = "Your Sign Up page.";
-
             return View();
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult Signup(UICustomer customer)
+        {
+            Customer Rcustomer = (Customer)customer;
+            Repo.AddCustomer(Rcustomer);
+            Repo.SaveChange();
+            Customer c = Repo.GetCustomerByEmail(Rcustomer.Email);
+            var ID = c.Id;
+
+            return RedirectToAction(
+                "Index", 
+                "Dashboard",
+                new { id = ID}
+            );
         }
 
         public IActionResult Notfound()
