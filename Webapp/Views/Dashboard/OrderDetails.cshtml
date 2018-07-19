@@ -1,0 +1,40 @@
+﻿@{
+    Layout = "_Dashboard";
+    @using Webapp.UI.Models
+    @model OrderDetailsCustomer;
+    decimal? totalSale = 0;
+
+}
+
+
+<h2>Order Detail</h2>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Order Details
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                    var currentItem = Model.Item.First(I => I.Id == item.ItemId);
+                <tr>
+                    <td> @currentItem.Name </td>
+                    <td> @item.Quantity</td>
+                    <td> $@(item.Quantity * currentItem.Price) </td>
+                </tr>
+
+                totalSale += @item.Quantity * @currentItem.Price;
+
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer text-right">Total: $<span>@totalSale</span></div>
+</div>

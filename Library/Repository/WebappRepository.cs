@@ -75,6 +75,12 @@ namespace Webapp.Library.Repository
             return customer;
         }
 
+        public List<Customer> SearchCustomerByName(string term)
+        {
+            var Customer = _db.Customer.Where(c => c.FirstName == term).ToList();
+            return Customer;
+        }
+
         public Customer GetCustomerByEmail(string email)
         {
             var customer = _db.Customer.Single(c => c.Email == email);
@@ -607,6 +613,31 @@ namespace Webapp.Library.Repository
             return order;
         }
 
+        public List<Orders> GetAllOrdersByCustomer(int ID)
+        {
+            var orders = _db.Orders.Where(o => o.CustomerId == ID).ToList();
+            return orders;
+        }
+
+        public List<Orders> GetAllOrdersByLocation(int ID)
+        {
+            var orders = _db.Orders.Where(o => o.LocationId == ID).ToList();
+            return orders;
+        }
+
+
+        public List<Customer> GetAllCustomerByLocation(int ID)
+        {
+            var customers = _db.Customer.Where(o => o.LocationId == ID).ToList();
+            return customers;
+        }
+
+        public List<OrderDetails> GetOrdersDetailsByOrderID(int ID)
+        {
+            var orderDetails = _db.OrderDetails.Where(o => o.OrderId == ID).ToList();
+            return orderDetails;
+        }
+
 
         /// <summary>
         /// Edits the orders.
@@ -737,3 +768,6 @@ namespace Webapp.Library.Repository
         }
     }
 }
+
+
+

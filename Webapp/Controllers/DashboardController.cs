@@ -21,17 +21,33 @@ namespace Webapp.UI.Controllers
             Repo = repo;
         }
 
-        // GET: /<controller>/
         public IActionResult Index(int id)
         {
-            Customer customer = Repo.GetCustomerByID(id);
-
+            var customer = Repo.GetCustomerByID(id);
             var fullname = $"{customer.FirstName} {customer.LastName}";
-
             ViewData["Customer Name"] = fullname;
             ViewData["Customer ID"] = customer.Id;
+            OrderHistoryCustomer orderHistory;
 
-            return View();
+            try {
+                var location = Repo.GetLocationByID(customer.LocationId);
+                var orders = Repo.GetAllOrdersByCustomer(customer.Id);
+
+
+                orderHistory = new OrderHistoryCustomer
+                {
+                    LocationName = location.Name,
+                    OrderHistory = orders,
+                };
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                orderHistory = new OrderHistoryCustomer();
+                return View(orderHistory);
+            }
+
+            return View(orderHistory);
         }
 
         [HttpGet]
@@ -51,55 +67,81 @@ namespace Webapp.UI.Controllers
 
                 Item = Repo.GetAllItem(),
 
-                Types = Repo.GetAllItemType()
+                Types = Repo.GetAllItemType(),
+
+                CustomerID = customer.Id,
+
+                LocationID = customer.LocationId
             };
 
             return View(newOrder);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public void NewOrder(OrderByLocation order)
+        public IActionResult NewOrder(OrderByLocation order)
         {
-            // Console.WriteLine("Runned");
-            // Calculate the total amout
-            // If order exceed $500 cancel order 
-            // and inform the user
+            return RedirectToAction(
+                "OrderSummary",
+                "DashBoard",
+                order
+            );
+        }
 
-            // Calculate the total items in the orther
-            // If total amount of item exceed from 12 
-            // Cancel order and inform the user
+        [HttpPost]
+        public IActionResult OrderSummary( OrderByLocation order) 
+        {
+            return View(order);
+        }
 
-            //If everythings is okay proceed to complete the order
-            int totalItemSelected = 0;
-            int totalQTY = 0;
-            decimal totalSales = 0;
+        [HttpPost]
+        public IActionResult OrderSuccess (OrderByLocation order)
+        {
+            Repo.AddOrders(
+                order.LocationID,
+                order.CustomerID,
+                order.SalesAmount,
+                order.Date,
+                order.TimeSpan
+            );
+            Repo.SaveChange();
+            var savedOrder = Repo.GetAllOrders().Last();
 
             order.NewOrderDetails.ForEach(
-            Item =>
-            {
-                Console.WriteLine(Item.ItemPrice);
-                Console.WriteLine(Item.ItemID);
-                Console.WriteLine(Item.ItemQty);
-                Console.WriteLine(Item.ItemCheck);
-
-                if (Item.ItemCheck)
+                detail =>
                 {
-                    totalItemSelected++;
-                    totalQTY += Item.ItemQty;
-                    totalSales += (Item.ItemPrice * Item.ItemQty);
+                    if(detail.ItemCheck)
+                    {
+                        Repo.AddOrderDetails(
+                            savedOrder.Id,
+                            detail.ItemID,
+                            detail.ItemQty
+                        );
+                        Repo.SaveChange();
+                    }
                 }
-            }
             );
-
-            Console.WriteLine("Total information of the order");
-            Console.WriteLine(totalItemSelected);
-            Console.WriteLine(totalQTY);
-            Console.WriteLine(totalSales);
-
-
-
-
+            return RedirectToAction("Index","Dashboard", new{id=order.CustomerID});
         }
+
+
+        [HttpGet]
+        public IActionResult OrderDetails(int id, int orderid) {
+            ViewData["customerID"] = id;
+            var orderDetails = Repo.GetOrdersDetailsByOrderID(orderid);
+            var item = (List<Item>) Repo.GetAllItem();
+            var cutomerOrderDetails = new OrderDetailsCustomer
+            {
+                OrderDetails = orderDetails,
+                Item = item
+            };
+
+            return View(cutomerOrderDetails);
+        }
+
+
+      
+
+
 
     }
 }

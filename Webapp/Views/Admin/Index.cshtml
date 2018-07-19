@@ -1,0 +1,34 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_Admin";
+    @using Webapp.UI.Models
+    @model LocationList
+}
+<h2 class="sub-header">Location</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Location Name</th>
+                <th>Phone</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var location in Model.List)
+            {
+            <tr>
+                <td> @location.Name</td>
+                <td> @location.Phone</td>
+                <td> 
+                <a asp-controller="Admin" asp-action="LocationOrderHistory" asp-route-id="@location.Id">Orders</a> |
+                <a asp-controller="Admin" asp-action="LocationInventory" asp-route-id="@location.Id">Inventory</a> |
+                <a asp-controller="Admin" asp-action="LocationCustomerHistory" asp-route-id="@location.Id">Clients</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

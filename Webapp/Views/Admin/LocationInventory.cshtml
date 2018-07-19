@@ -1,0 +1,32 @@
+﻿@{
+    Layout = "_Admin";
+    @using Webapp.UI.Models;
+    @model LocationInventory
+}
+
+<h2 class="sub-header"> Inventory</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Name</th>
+                <th>Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.InventoryList)
+    {
+
+        var inventoryItem = Model.ItemInventory.First(o => o.Id == @item.ItemId);
+            <tr>
+
+                <td> @item.Id </td>
+                <td> @inventoryItem.Name</td>
+                <td> @item.Quantity </td>
+            </tr>
+}
+        </tbody>
+    </table>
+
+</div>

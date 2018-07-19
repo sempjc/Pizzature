@@ -30,9 +30,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Dashboard\" />
+    <Folder Include="Views\Admin\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Models\EmptyClass.cs" />
+    <Compile Remove="Views\Dashboard\OrderDetailsCustomer.cs" />
+    <Compile Remove="Controllers\AdminControllers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Models\Inventory.cs">

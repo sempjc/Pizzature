@@ -1,0 +1,122 @@
+﻿@{
+    Layout = "_Dashboard";
+    @using Webapp.UI.Models
+    @model OrderByLocation;
+
+
+    int totalItemSelected = 0;
+    int totalQTY = 0;
+    decimal totalSales = 0;
+
+    Model.NewOrderDetails.ForEach(
+        Item =>
+        {
+            if (Item.ItemCheck)
+            {
+                totalItemSelected++;
+                totalQTY += Item.ItemQty;
+                totalSales += (Item.ItemPrice * Item.ItemQty);
+            }
+        }
+    );
+
+
+    Model.ExceedOrder = totalQTY > 12;
+    Model.ExceedSales = (totalSales > 500);
+}
+
+
+@if (Model.ExceedSales)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Your order exceed our limit policy of <strong>$500</strong> by $@(totalSales - 500) Please Edit your order
+    </div>
+}
+
+
+@if (Model.ExceedSales)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Your order exceed our limit policy of <strong>12 item</strong> by @(totalQTY - 12) Please Edit your order
+    </div>
+}
+
+<h2>Order Summary</h2>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Order Details
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Amout</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.NewOrderDetails)
+                {
+                    if (item.ItemCheck)
+                    {
+                        <tr>
+                            <td> @item.ItemName </td>
+                            <td> @item.ItemQty </td>
+                            <td> @(item.ItemPrice * item.ItemQty) </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer text-right">Total: $<span>@totalSales</span></div>
+</div>
+
+
+
+@if (Model.ExceedOrder || Model.ExceedSales)
+{
+    <div style="width: 15%">
+        <button class="btn btn-lg btn-primary btn-block" onclick="goback()" type="submit">Edit Order</button>
+    </div>
+}
+else
+{
+
+    var time = DateTime.Now.ToString("m/dd/yyyy");
+    var index = 0;
+    <form asp-controller="Dashboard" asp-action="OrderSuccess" method="post">
+        <input hidden type="text" asp-for="CustomerID" value="@Model.CustomerID" />
+        <input hidden type="text" asp-for="LocationID" value="@Model.LocationID" />
+        <input hidden type="text" asp-for="SalesAmount" value="@totalSales" />
+        <input hidden type="datetime" asp-for="Date" value="@time" />
+        <input hidden type="datetime" asp-for="TimeSpan" value="@DateTime.Now.TimeOfDay.ToString() />
+        <input hidden asp-for="Orders" value="@Model.Orders" />
+        @foreach (var detailOrder in Model.NewOrderDetails)
+        {
+            <input hidden  type="number" asp-for="NewOrderDetails[index].ItemID" value="@detailOrder.ItemID" />
+            <input hidden  type="number" asp-for="NewOrderDetails[index].ItemQty" value="@detailOrder.ItemQty" />
+            <input hidden  type="checkbox" asp-for="NewOrderDetails[index].ItemCheck" value="@detailOrder.ItemCheck" />
+            <input hidden  type="number" asp-for="NewOrderDetails[index].ItemPrice" value="@detailOrder.ItemPrice" />
+            <input hidden  type="text" asp-for="NewOrderDetails[index].ItemName" value="@detailOrder.ItemName" />
+            index++;
+        }
+
+
+        <div style="width: 15%">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Place Order</button>
+        </div>
+    </form>
+}
+
+
+
+
+<script>function goback() {
+        window.history.back();
+}</script>
+
+
